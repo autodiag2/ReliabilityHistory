@@ -1,0 +1,10 @@
+[Unit]
+Description=Reliability History Crash Collector
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/reliability_history
+ExecStart=/usr/local/bin/reliability-history-collector collect
+StandardOutput=journal
+StandardError=journal

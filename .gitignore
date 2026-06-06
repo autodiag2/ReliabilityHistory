@@ -1,0 +1,10 @@
+/target
+**/*.rs.bk
+**/*~
+*.swp
+.DS_Store
+/data/events.json
+/data/crash_reports
+**/node_modules
+**/dist
+doc

@@ -1,0 +1,12 @@
+[package]
+name = "reliability_history"
+version = "0.1.0"
+edition = "2021"\nauthors = ["Reliability History <noreply@example.com>"]
+description = "Collects application crash events and provides a GUI dashboard for reliability history."
+license = "MIT"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["local"] }
+sd-journal = "0.6"
