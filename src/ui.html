@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+    font-family: Segoe UI,sans-serif;
+    margin:0;
+    background:white;
+}
+
+.header {
+    padding:16px;
+    border-bottom:1px solid #ddd;
+}
+
+.timeline {
+    height:350px;
+    border-bottom:1px solid #ddd;
+}
+
+.details {
+    padding:16px;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+td,th {
+    border:1px solid #ddd;
+    padding:6px;
+}
+
+.day {
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h2>Review your computer's reliability and problem history</h2>
+</div>
+
+<div id="timeline" class="timeline"></div>
+
+<div class="details">
+<table id="events">
+<thead>
+<tr>
+<th>Source</th>
+<th>Summary</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+
+<script>
+
+window.days = [];
+
+function selectDay(index) {
+    window.webkit.messageHandlers.app.postMessage(
+        JSON.stringify({
+            action: "select_day",
+            day: index
+        })
+    );
+}
+
+function updateDays(days) {
+    window.days = days;
+
+    const timeline =
+        document.getElementById("timeline");
+
+    timeline.innerHTML = "";
+
+    days.forEach((d,i) => {
+        const div =
+            document.createElement("div");
+
+        div.className = "day";
+
+        div.innerHTML =
+            d.day +
+            " (" +
+            d.score.toFixed(1) +
+            ")";
+
+        div.onclick =
+            () => selectDay(i);
+
+        timeline.appendChild(div);
+    });
+}
+
+function showEvents(events) {
+    const body =
+        document.querySelector("#events tbody");
+
+    body.innerHTML = "";
+
+    events.forEach(ev => {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML =
+            `<td>${ev.application}</td>
+             <td>${ev.reason}</td>
+             <td>${ev.timestamp}</td>`;
+
+        body.appendChild(row);
+    });
+}
+
+</script>
+
+</body>
+</html>

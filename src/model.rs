@@ -1,6 +1,7 @@
 use chrono::{DateTime, Local};
+use serde::Serialize;
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize)]
 pub enum EventKind {
     ApplicationFailure,
     SystemFailure,
@@ -8,7 +9,7 @@ pub enum EventKind {
     Information,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Event {
     pub id: String,
     pub timestamp: DateTime<Local>,
@@ -17,7 +18,7 @@ pub struct Event {
     pub kind: EventKind,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct DaySummary {
     pub day: String,
     pub score: f32,

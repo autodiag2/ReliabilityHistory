@@ -1,109 +1,150 @@
 mod journal;
 mod model;
 mod reliability;
-mod timeline;
+use gio;
+use gtk::prelude::*;
+use gtk::{Application, ApplicationWindow};
 
-use eframe::egui;
+use serde_json::json;
 
-use model::DaySummary;
+use webkit2gtk::UserContentManager;
+use webkit2gtk::{
+    WebView
+};
 
-struct ReliabilityApp {
-    days: Vec<DaySummary>,
-    selected_day: usize,
+fn main() {
+    let app = Application::builder()
+        .application_id(
+            "com.example.reliability"
+        )
+        .build();
+
+    app.connect_activate(build_ui);
+
+    app.run();
 }
 
-impl ReliabilityApp {
-    fn new() -> Self {
-        let events = journal::collect_events();
-        let days = reliability::build_days(&events);
+fn build_ui(app: &Application) {
 
-        Self {
-            days,
-            selected_day: 0,
-        }
-    }
-}
+    let events =
+        journal::collect_events();
 
-impl eframe::App for ReliabilityApp {
-    fn update(
-        &mut self,
-        ctx: &egui::Context,
-        _frame: &mut eframe::Frame,
-    ) {
-        egui::TopBottomPanel::top("header").show(
-            ctx,
-            |ui| {
-                ui.heading(
-                    "Review your computer's reliability and problem history",
-                );
-            },
+    let days =
+        reliability::build_days(&events);
+
+    let manager =
+        UserContentManager::new();
+
+    manager
+        .register_script_message_handler(
+            "app"
+        )
+        .unwrap();
+
+    let webview =
+        WebView::with_user_content_manager(
+            &manager
         );
 
-        egui::CentralPanel::default().show(ctx, |ui| {
-            timeline::draw(
-                ui,
-                &self.days,
-                &mut self.selected_day,
+    let html =
+        include_str!("ui.html");
+
+    webview.load_html(
+        html,
+        Some("file:///"),
+    );
+
+    let days_json =
+        serde_json::to_string(&days)
+            .unwrap();
+
+    let webview_clone =
+        webview.clone();
+
+    webview.connect_load_changed(
+        move |_, _| {
+
+            let js = format!(
+                "updateDays({});",
+                days_json
             );
 
-            ui.separator();
+            webview_clone
+                .run_javascript(
+                    &js,
+                    None::<&gio::Cancellable>,
+                    |_| {},
+                );
+        }
+    );
 
-            if let Some(day) =
-                self.days.get(self.selected_day)
-            {
-                ui.heading(format!(
-                    "Reliability details for {}",
-                    day.day
-                ));
+    let days_clone =
+        days.clone();
 
-                egui::ScrollArea::vertical()
-                    .max_height(260.0)
-                    .show(ui, |ui| {
-                        egui::Grid::new("details")
-                            .striped(true)
-                            .show(ui, |ui| {
-                                ui.label("Source");
-                                ui.label("Summary");
-                                ui.label("Date");
-                                ui.end_row();
+    let webview_clone =
+        webview.clone();
 
-                                for ev in &day.events {
-                                    ui.label(&ev.application);
+    manager.connect_script_message_received(
+        None,
+        move |_, msg| {
 
-                                    ui.label(
-                                        ev.reason
-                                            .chars()
-                                            .take(80)
-                                            .collect::<String>(),
-                                    );
+            let Some(value) =
+                msg.js_value()
+            else {
+                return;
+            };
 
-                                    ui.label(
-                                        ev.timestamp
-                                            .format(
-                                                "%Y-%m-%d %H:%M",
-                                            )
-                                            .to_string(),
-                                    );
+            let Some(text) =
+                value.to_string()
+            else {
+                return;
+            };
 
-                                    ui.end_row();
-                                }
-                            });
-                    });
+            let Ok(v) =
+                serde_json::from_str::<serde_json::Value>(&text)
+            else {
+                return;
+            };
+
+            if v["action"] == "select_day" {
+
+                let idx =
+                    v["day"]
+                        .as_u64()
+                        .unwrap_or(0)
+                        as usize;
+
+                if let Some(day) =
+                    days_clone.get(idx)
+                {
+                    let js = format!(
+                        "showEvents({});",
+                        serde_json::to_string(
+                            &day.events
+                        ).unwrap()
+                    );
+
+                    webview_clone
+                        .run_javascript(
+                            &js,
+                            None::<&gio::Cancellable>,
+                            |_| {},
+                        );
+                }
             }
-        });
-    }
-}
+        }
+    );
 
-fn main() -> eframe::Result<()> {
-    let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1400.0, 850.0]),
-        ..Default::default()
-    };
+    let window =
+        ApplicationWindow::builder()
+            .application(app)
+            .title(
+                "Reliability Monitor"
+            )
+            .default_width(1400)
+            .default_height(850)
+            .child(&webview)
+            .build();
 
-    eframe::run_native(
-        "Reliability Monitor",
-        options,
-        Box::new(|_| Ok(Box::new(ReliabilityApp::new()))),
-    )
+    window.show();
 }
