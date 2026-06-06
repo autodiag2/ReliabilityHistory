@@ -164,6 +164,46 @@ function renderChart(days) {
     );
 
     svg.appendChild(grid);
+    const date =
+      new Date(day.day);
+
+    const label =
+      `${date.getMonth() + 1}/${date.getDate()}`;
+
+    const text =
+      document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+
+    text.setAttribute(
+      "x",
+      x + dayWidth / 2
+    );
+
+    text.setAttribute(
+      "y",
+      graphHeight + 130
+    );
+
+    text.setAttribute(
+      "text-anchor",
+      "middle"
+    );
+
+    text.setAttribute(
+      "font-size",
+      "11"
+    );
+
+    text.setAttribute(
+      "fill",
+      "#666"
+    );
+
+    text.textContent = label;
+
+    svg.appendChild(text);
   });
 
   let path = "";
