@@ -107,6 +107,14 @@ button:active {
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   background: #f8fafc;
+  height: fit-content;
+}
+.chart-legend {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 1em;
+  margin-top: 20px;
 }
 
 .chart-bar {
@@ -120,6 +128,9 @@ button:active {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 20px;
+  width: 100%;
+  align-content: center;
+  display: flex;
 }
 
 .day-list,

@@ -26,7 +26,7 @@ pub fn build_days(events: &[Event]) -> Vec<DaySummary> {
             score -= match ev.kind {
                 EventKind::ApplicationFailure => 1.0,
                 EventKind::SystemFailure => 1.5,
-                EventKind::Warning => 0.25,
+                EventKind::Warning => 0.0,
                 EventKind::Information => 0.0,
             };
         }
