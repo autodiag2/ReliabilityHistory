@@ -1,13 +1,10 @@
 [package]
-name = "reliability_history"
+name = "reliability-monitor"
 version = "0.1.0"
 edition = "2021"
-authors = ["Reliability History <noreply@example.com>"]
-description = "Collects application crash events and provides a GUI dashboard for reliability history."
-license = "MIT"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
+eframe = "0.33"
+egui = "0.33"
 chrono = "0.4"
-sd-journal = "0.1.0"
-fltk = "1.5.23"
+sd-journal = "0.1"
