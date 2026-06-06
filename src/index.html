@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reliability History</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>Reliability History</h1>
+          <p>Review recent reliability events collected from journald.</p>
+        </div>
+        <button id="refresh-button">Reload</button>
+      </header>
+
+      <section class="overview-card">
+        <div class="score-panel">
+          <span class="score-label">Reliability score</span>
+          <strong id="current-score">-</strong>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-title">Reliability curve</div>
+          <div id="chart" class="chart"></div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <aside class="day-list">
+          <h2>Daily summary</h2>
+          <div id="timeline"></div>
+        </aside>
+
+        <section class="details-panel">
+          <h2>Events</h2>
+          <table id="events">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Source</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

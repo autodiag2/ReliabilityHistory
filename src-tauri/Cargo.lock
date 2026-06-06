@@ -460,8 +460,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
 dependencies = [
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-link 0.2.1",
 ]
 
@@ -2721,6 +2723,8 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 name = "reliability-monitor"
 version = "0.1.0"
 dependencies = [
+ "chrono",
+ "sd-journal",
  "serde",
  "serde_json",
  "tauri",
@@ -2861,6 +2865,37 @@ name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+
+[[package]]
+name = "sd-id128"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9832611438c843403073ad525ca9aede241d89df2c309a1ca7f6b98e5eeaf4a8"
+dependencies = [
+ "sd-sys",
+]
+
+[[package]]
+name = "sd-journal"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a402a23a518a27b04a4f6023b9659dc117486c322cce379c590400cd55df778c"
+dependencies = [
+ "chrono",
+ "libc",
+ "sd-id128",
+ "sd-sys",
+]
+
+[[package]]
+name = "sd-sys"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a28d560362cbf5004084e1655583d7b4857f0f9eee285faa31ec3b539ca2536d"
+dependencies = [
+ "libc",
+ "pkg-config",
+]
 
 [[package]]
 name = "selectors"
