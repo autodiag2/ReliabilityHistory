@@ -26,8 +26,11 @@ const EV_KIND_SYS_FAILURE = "SystemFailure";
 function renderChart(days) {
   const chart = document.getElementById("chart");
 
-  const width = chart.clientWidth || 1200;
-  const height = 340;
+  window.chartWidth ??=
+    chart.clientWidth || 1200;
+
+  const width = window.chartWidth;
+  const height = 500;
 
   chart.innerHTML = "";
 
@@ -174,7 +177,13 @@ function renderChart(days) {
       new Date(day.day);
 
     const label =
-      `${date.getMonth() + 1}/${date.getDate()}`;
+      new Intl.DateTimeFormat(
+        navigator.language,
+        {
+          month: "numeric",
+          day: "numeric"
+        }
+      ).format(date);
 
     const text =
       document.createElementNS(
@@ -257,17 +266,17 @@ function renderChart(days) {
   svg.appendChild(curve);
 
   const rowY = {
-    EV_KIND_INFO: graphHeight + 35,
-    EV_KIND_WARNING: graphHeight + 65,
-    EV_KIND_APP_FAILURE: graphHeight + 95,
-    EV_KIND_SYS_FAILURE: graphHeight + 95
+    [EV_KIND_INFO]: graphHeight + 35,
+    [EV_KIND_WARNING]: graphHeight + 65,
+    [EV_KIND_APP_FAILURE]: graphHeight + 95,
+    [EV_KIND_SYS_FAILURE]: graphHeight + 95
   };
 
   const rowIcon = {
-    EV_KIND_INFO: "ℹ️",
-    EV_KIND_WARNING: "⚠️",
-    EV_KIND_APP_FAILURE: "❌",
-    EV_KIND_SYS_FAILURE: "❌"
+    [EV_KIND_INFO]: "ℹ️",
+    [EV_KIND_WARNING]: "⚠️",
+    [EV_KIND_APP_FAILURE]: "❌",
+    [EV_KIND_SYS_FAILURE]: "❌"
   };
 
   days.forEach((day, dayIndex) => {
@@ -324,7 +333,31 @@ function updateScore(days) {
     currentScore.textContent = "No data";
   }
 }
+function groupEvents(events) {
+  const groups = [];
 
+  for (const ev of events) {
+    const last = groups[groups.length - 1];
+
+    if (
+      last &&
+      last.application === ev.application &&
+      last.reason === ev.reason &&
+      last.kind === ev.kind
+    ) {
+      last.events.push(ev);
+    } else {
+      groups.push({
+        application: ev.application,
+        reason: ev.reason,
+        kind: ev.kind,
+        events: [ev]
+      });
+    }
+  }
+
+  return groups;
+}
 function showEvents(events) {
   const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
   for(let evKind of evKinds) {
@@ -334,23 +367,84 @@ function showEvents(events) {
     }
   }
   
-  events.forEach((ev) => {
-    const row = document.createElement("tr");
-    row.className = "event-row";
-    row.innerHTML = `
-      <td>${ev.application}</td>
-      <td>${ev.reason}</td>
-      <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
-    `;
-    row.addEventListener("click", () => {
-      window.alert(`Source: ${ev.application}\nTime: ${new Date(ev.timestamp).toLocaleTimeString()}\nReason: ${ev.reason}`);
-    });
-    const table = document.querySelector(`#events-${ev.kind.toLowerCase()} tbody`);
-    if ( table ) {
-      table.appendChild(row);
-    } else {
-      console.warn(`No table found for event kind: ${ev.kind}`);
+  const groups = groupEvents(events);
+
+  groups.forEach(group => {
+
+    const table =
+      document.querySelector(
+        `#events-${group.kind.toLowerCase()} tbody`
+      );
+
+    if (!table) {
+      return;
     }
+
+    if (group.events.length === 1) {
+
+      const ev = group.events[0];
+
+      const row =
+        document.createElement("tr");
+
+      row.className = "event-row";
+
+      row.innerHTML = `
+        <td>${ev.application}</td>
+        <td>${ev.reason}</td>
+        <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
+      `;
+
+      table.appendChild(row);
+
+      return;
+    }
+
+    const detailsRow =
+      document.createElement("tr");
+    detailsRow.className = "event-row";
+
+    const first =
+      group.events[0];
+
+    const last =
+      group.events[group.events.length - 1];
+
+    detailsRow.innerHTML = `
+      <td>${group.application}</td>
+      <td>${group.reason}</td>
+      <td>
+        <details>
+          <summary>
+            (${group.events.length} occurrences,
+            ${new Date(first.timestamp).toLocaleTimeString()}
+            →
+            ${new Date(last.timestamp).toLocaleTimeString()})
+          </summary>
+
+          <table class="subtable">
+            <thead>
+              <tr>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${
+                group.events.map(ev => `
+                  <tr>
+                    <td>
+                      ${new Date(ev.timestamp).toLocaleTimeString()}
+                    </td>
+                  </tr>
+                `).join("")
+              }
+            </tbody>
+          </table>
+        </details>
+      </td>
+    `;
+
+    table.appendChild(detailsRow);
   });
   for(let evKind of evKinds) {
     const table = document.querySelector(`#events-${evKind.toLowerCase()} tbody`);
