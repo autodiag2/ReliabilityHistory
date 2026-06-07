@@ -37,17 +37,70 @@
       <section class="content-grid">
         <section class="details-panel">
           <h2>Events</h2>
-          <table id="events">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Time</th>
-                <th>Source</th>
-                <th>Summary</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <details open id="applicationfailure-section">
+            <summary>
+              ❌ Application Errors (<span class="event-count" id="applicationfailure-count">0</span>)
+            </summary>
+
+            <table id="events-applicationfailure">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Summary</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </details>
+          <details open id="systemfailure-section">
+            <summary>
+              ❌ System Errors (<span class="event-count" id="systemfailure-count">0</span>)
+            </summary>
+
+            <table id="events-systemfailure">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Summary</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </details>
+          <details open id="warning-section">
+            <summary>
+              ⚠️ Warnings (<span class="event-count" id="warning-count">0</span>)
+            </summary>
+
+            <table id="events-warning">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Summary</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </details>
+          <details open id="information-section">
+            <summary>
+              ℹ️ Information Events (<span class="event-count" id="information-count">0</span>)
+            </summary>
+
+            <table id="events-information">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Summary</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </details>
         </section>
       </section>
     </main>

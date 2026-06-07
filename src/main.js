@@ -16,7 +16,13 @@ function selectDay(index, days) {
     showEvents(day.events);
   }
 }
+
 const AUTORECOVER_SCORE_PER_DAY = 1.0;
+const EV_KIND_INFO = "Information";
+const EV_KIND_WARNING = "Warning";
+const EV_KIND_APP_FAILURE = "ApplicationFailure";
+const EV_KIND_SYS_FAILURE = "SystemFailure";
+
 function renderChart(days) {
   const chart = document.getElementById("chart");
 
@@ -71,11 +77,11 @@ function renderChart(days) {
         ) / 24;
 
       score -=
-        event.kind === "ApplicationFailure"
+        event.kind === EV_KIND_APP_FAILURE
           ? 1.0
-        : event.kind === "SystemFailure"
+        : event.kind === EV_KIND_SYS_FAILURE
           ? 1.5
-        : event.kind === "Warning"
+        : event.kind === EV_KIND_WARNING
           ? 0.25
         : 0.0;
 
@@ -251,17 +257,17 @@ function renderChart(days) {
   svg.appendChild(curve);
 
   const rowY = {
-    Information: graphHeight + 35,
-    Warning: graphHeight + 65,
-    ApplicationFailure: graphHeight + 95,
-    SystemFailure: graphHeight + 95
+    EV_KIND_INFO: graphHeight + 35,
+    EV_KIND_WARNING: graphHeight + 65,
+    EV_KIND_APP_FAILURE: graphHeight + 95,
+    EV_KIND_SYS_FAILURE: graphHeight + 95
   };
 
   const rowIcon = {
-    Information: "ℹ️",
-    Warning: "⚠️",
-    ApplicationFailure: "❌",
-    SystemFailure: "❌"
+    EV_KIND_INFO: "ℹ️",
+    EV_KIND_WARNING: "⚠️",
+    EV_KIND_APP_FAILURE: "❌",
+    EV_KIND_SYS_FAILURE: "❌"
   };
 
   days.forEach((day, dayIndex) => {
@@ -320,28 +326,44 @@ function updateScore(days) {
 }
 
 function showEvents(events) {
-  const body = document.querySelector("#events tbody");
-  body.innerHTML = "";
-
+  const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
+  for(let evKind of evKinds) {
+    const table = document.querySelector(`#events-${evKind.toLowerCase()} tbody`);
+    if (table) {
+      table.innerHTML = "";
+    }
+  }
+  
   events.forEach((ev) => {
     const row = document.createElement("tr");
     row.className = "event-row";
-    const icon = ev.kind === "ApplicationFailure"
-      ? "❌"
-      : ev.kind === "SystemFailure"
-        ? "❌"
-        : ev.kind === "Warning"
-          ? "⚠️"
-          : "ℹ️";
     row.innerHTML = `
-      <td>${icon}</td>
-      <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
       <td>${ev.application}</td>
       <td>${ev.reason}</td>
+      <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
     `;
     row.addEventListener("click", () => {
       window.alert(`Source: ${ev.application}\nTime: ${new Date(ev.timestamp).toLocaleTimeString()}\nReason: ${ev.reason}`);
     });
-    body.appendChild(row);
+    const table = document.querySelector(`#events-${ev.kind.toLowerCase()} tbody`);
+    if ( table ) {
+      table.appendChild(row);
+    } else {
+      console.warn(`No table found for event kind: ${ev.kind}`);
+    }
   });
+  for(let evKind of evKinds) {
+    const table = document.querySelector(`#events-${evKind.toLowerCase()} tbody`);
+    const section = document.querySelector(`#${evKind.toLowerCase()}-section`);
+    const count = document.querySelector(`#${evKind.toLowerCase()}-count`);
+    if (count) {
+      count.textContent = table ? table.children.length : "0";
+    }
+    if (table && table.children.length > 0) {
+      section.style.display = "block";
+
+    } else if (table) {
+      section.style.display = "none";
+    }
+  }
 }

@@ -139,6 +139,10 @@ button:active {
   border-radius: 24px;
   padding: 20px;
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
+  width: 100%;
+}
+[id$="-section"] summary{
+  cursor: pointer;
 }
 
 .day-list h2,
