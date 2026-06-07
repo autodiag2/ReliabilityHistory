@@ -1,9 +1,22 @@
 const { invoke } = window.__TAURI__.core;
 
 async function loadDays() {
+  showLoading();
   const days = await invoke("load_days");
   renderChart(days);
   updateScore(days);
+  hideLoading();
+}
+function showLoading() {
+  document
+    .getElementById("loading-overlay")
+    .classList.remove("hidden");
+}
+
+function hideLoading() {
+  document
+    .getElementById("loading-overlay")
+    .classList.add("hidden");
 }
 
 window.addEventListener("DOMContentLoaded", () => {

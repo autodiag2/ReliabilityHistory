@@ -9,11 +9,6 @@ pub fn load_day_summaries() -> Vec<model::DaySummary> {
 }
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
 fn load_days() -> Vec<model::DaySummary> {
     load_day_summaries()
 }
@@ -22,7 +17,7 @@ fn load_days() -> Vec<model::DaySummary> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, load_days])
+        .invoke_handler(tauri::generate_handler![load_days])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
