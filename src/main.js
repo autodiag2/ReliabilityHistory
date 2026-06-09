@@ -346,11 +346,16 @@ function updateScore(days) {
     currentScore.textContent = "No data";
   }
 }
+/**
+ * 
+ * @param {*} events sorted by timestamp
+ */
 function groupEvents(events) {
   const groups = [];
 
+  const lasts = {};
   for (const ev of events) {
-    const last = groups[groups.length - 1];
+    const last = lasts[ev.kind]
 
     if (
       last &&
@@ -366,6 +371,7 @@ function groupEvents(events) {
         kind: ev.kind,
         events: [ev]
       });
+      lasts[ev.kind] = groups[groups.length-1]
     }
   }
 
