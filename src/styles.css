@@ -35,7 +35,7 @@ button:active {
   transform: translateY(0);
 }
 
-.app-shell {
+#app-shell {
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
@@ -259,6 +259,9 @@ details {
 
 .loading-content {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .loading-text {

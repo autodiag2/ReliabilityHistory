@@ -11,17 +11,19 @@ function showLoading() {
   document
     .getElementById("loading-overlay")
     .classList.remove("hidden");
+  document.getElementById("app-shell").style.display = "none";
 }
 
 function hideLoading() {
   document
     .getElementById("loading-overlay")
     .classList.add("hidden");
+  document.getElementById("app-shell").style.display = "initial";
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#refresh-button").addEventListener("click", loadDays);
-  loadDays();
+  //loadDays();
 });
 function selectDay(index, days) {
   const day = days[index];
