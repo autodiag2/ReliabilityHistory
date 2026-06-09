@@ -2,7 +2,12 @@ const { invoke } = window.__TAURI__.core;
 
 async function loadDays() {
   showLoading();
-  const days = await invoke("load_days");
+  invoke("load_days").then((days) => {
+    onDaysLoaded(days);
+  });
+}
+
+function onDaysLoaded(days) {
   renderChart(days);
   updateScore(days);
   hideLoading();
@@ -23,7 +28,7 @@ function hideLoading() {
 
 window.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#refresh-button").addEventListener("click", loadDays);
-  //loadDays();
+  loadDays();
 });
 function selectDay(index, days) {
   const day = days[index];

@@ -9,9 +9,8 @@ pub fn load_day_summaries() -> Vec<model::DaySummary> {
 }
 
 #[tauri::command]
-fn load_days() -> Vec<model::DaySummary> {
-    //load_day_summaries()
-    return Vec::new()
+async fn load_days() -> Vec<model::DaySummary> {
+    load_day_summaries()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
