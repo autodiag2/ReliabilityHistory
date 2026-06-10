@@ -1,24 +1,30 @@
 use std::collections::BTreeMap;
 
-use chrono::Datelike;
+use chrono::{Datelike, Duration, Local, NaiveDate};
 
 use crate::model::{DaySummary, Event, EventKind};
 
 pub fn build_days(events: &[Event]) -> Vec<DaySummary> {
-    let mut days = BTreeMap::<String, Vec<Event>>::new();
+    let mut days = BTreeMap::<NaiveDate, Vec<Event>>::new();
 
-    for event in events {
-        let key = format!(
-            "{:04}-{:02}-{:02}",
-            event.timestamp.year(),
-            event.timestamp.month(),
-            event.timestamp.day()
-        );
+    // Pre-populate the last 30 days with empty event lists.
+    let today = Local::now().date_naive();
 
-        days.entry(key).or_default().push(event.clone());
+    for offset in (0..30).rev() {
+        let day = today - Duration::days(offset);
+        days.insert(day, Vec::new());
     }
 
-    let mut result = Vec::new();
+    // Add events that fall within the last 30 days.
+    for event in events {
+        let date = event.timestamp.date_naive();
+
+        if days.contains_key(&date) {
+            days.entry(date).or_default().push(event.clone());
+        }
+    }
+
+    let mut result = Vec::with_capacity(30);
     let mut score = 10.0f32;
 
     for (day, events) in days {
@@ -31,21 +37,21 @@ pub fn build_days(events: &[Event]) -> Vec<DaySummary> {
             };
         }
 
-        if score < 1.0 {
-            score = 1.0;
-        }
+        score = score.max(1.0);
 
         result.push(DaySummary {
-            day,
+            day: format!(
+                "{:04}-{:02}-{:02}",
+                day.year(),
+                day.month(),
+                day.day()
+            ),
             score,
             events,
         });
 
-        score += 0.1;
-
-        if score > 10.0 {
-            score = 10.0;
-        }
+        // Recovery for the next day.
+        score = (score + 0.1).min(10.0);
     }
 
     result

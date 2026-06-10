@@ -71,6 +71,7 @@ button:active {
   border-radius: 28px;
   padding: 22px;
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
+  margin-left: 20px;
 }
 
 .score-label {
@@ -130,6 +131,7 @@ button:active {
   width: 100%;
   align-content: center;
   display: flex;
+  margin-left: 20px;
 }
 
 .day-list,

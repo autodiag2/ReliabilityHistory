@@ -301,23 +301,34 @@ function renderChart(days) {
 
   days.forEach((day, dayIndex) => {
 
-    day.events.forEach(event => {
+    const toDrawEventsKind = {
+      [EV_KIND_INFO]: false,
+      [EV_KIND_WARNING]: false,
+      [EV_KIND_APP_FAILURE]: false,
+      [EV_KIND_SYS_FAILURE]: false
+    };
 
-      const ts =
-        new Date(event.timestamp);
+    let count = 0;
+    day.events.forEach((ev) => {
+      if ( toDrawEventsKind[ev.kind] === false ) {
+        count++;
+      }
+      toDrawEventsKind[ev.kind] = true;
+      if ( toDrawEventsKind.count <= count ) {
+        return;
+      }
+    });
 
-      const fraction =
-        (
-          ts.getHours()
-          + ts.getMinutes() / 60
-        ) / 24;
-
+    Object.entries(toDrawEventsKind).forEach(([evKind, toDraw]) => {
+      if (!toDraw) {
+        return;
+      }
       const x =
         dayIndex * dayWidth
-        + fraction * dayWidth;
+        + 0.4 * dayWidth;
 
       const y =
-        rowY[event.kind]
+        rowY[evKind]
         || rowY.Information;
 
       const text =
@@ -335,7 +346,7 @@ function renderChart(days) {
       );
 
       text.textContent =
-        rowIcon[event.kind]
+        rowIcon[evKind]
         || "ℹ️";
 
       svg.appendChild(text);

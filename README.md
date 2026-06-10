@@ -1,6 +1,6 @@
 # Reliability History - RelHist
-The missing gui for end users to monitor health of the system over time.
-
+The missing gui for end users to monitor health of the system over time.  
+The goal is to have long term app crashes history without the need to externalize logs, easy to use, efficient, reliable, compat any distro that includes journald.
 
 ## Developpment
 ### Recommended IDE Setup
