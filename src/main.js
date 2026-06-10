@@ -50,7 +50,19 @@ function renderChart(days) {
     chart.clientWidth || 1200;
 
   const width = window.chartWidth;
-  const height = 500;
+  const defaultPadding = 8;
+  const height = 370;
+  const fontSize = 11;
+  const fontSizeIcons = 18;
+  const rowDateHeightPaddingY = defaultPadding;
+  const rowDateHeight = fontSize + rowDateHeightPaddingY * 2;
+  const rowIconsHeightPaddingY = defaultPadding;
+  const rowIconsHeight = fontSizeIcons + rowIconsHeightPaddingY * 2;
+  const graphHeight = height - rowDateHeight - rowIconsHeight * 4;
+  const dayWidth = width / Math.max(days.length, 1);
+
+
+  const maxScore = 10.0;
 
   chart.innerHTML = "";
 
@@ -63,17 +75,14 @@ function renderChart(days) {
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
 
-  const graphHeight = 180;
-  const dayWidth = width / Math.max(days.length, 1);
-
-  let score = 10.0;
+  let score = maxScore;
 
   const points = [];
 
   days.forEach((day, dayIndex) => {
 
     if (dayIndex > 0) {
-      score = Math.min(10.0, score + AUTORECOVER_SCORE_PER_DAY);
+      score = Math.min(maxScore, score + AUTORECOVER_SCORE_PER_DAY);
     }
 
     points.push([
@@ -118,13 +127,13 @@ function renderChart(days) {
     });
 
     score =
-      Math.min(10.0, score + 0.05);
+      Math.min(maxScore, score + 0.05);
   });
 
-  for (let i = 0; i <= 10; i++) {
+  for (let i = 0; i <= maxScore; i++) {
 
     const y =
-      graphHeight * i / 10;
+      graphHeight * i / maxScore;
 
     const line =
       document.createElementNS(
@@ -140,6 +149,32 @@ function renderChart(days) {
 
     svg.appendChild(line);
   }
+
+  const rightBorder = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "line"
+  );
+
+  rightBorder.setAttribute("x1", width);
+  rightBorder.setAttribute("y1", 0);
+  rightBorder.setAttribute("x2", width);
+  rightBorder.setAttribute("y2", height);
+  rightBorder.setAttribute("stroke", "#e0e0e0");
+
+  svg.appendChild(rightBorder);
+
+  const bottomBorder = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "line"
+  );
+
+  bottomBorder.setAttribute("x1", 0);
+  bottomBorder.setAttribute("y1", height);
+  bottomBorder.setAttribute("x2", width);
+  bottomBorder.setAttribute("y2", height);
+  bottomBorder.setAttribute("stroke", "#e0e0e0");
+
+  svg.appendChild(bottomBorder);
 
   days.forEach((day, i) => {
 
@@ -218,7 +253,7 @@ function renderChart(days) {
 
     text.setAttribute(
       "y",
-      graphHeight + 130
+      graphHeight + fontSize + rowDateHeightPaddingY
     );
 
     text.setAttribute(
@@ -228,7 +263,7 @@ function renderChart(days) {
 
     text.setAttribute(
       "font-size",
-      "11"
+      `${fontSize}`
     );
 
     text.setAttribute(
@@ -286,10 +321,10 @@ function renderChart(days) {
   svg.appendChild(curve);
 
   const rowY = {
-    [EV_KIND_INFO]: graphHeight + 35,
-    [EV_KIND_WARNING]: graphHeight + 65,
-    [EV_KIND_APP_FAILURE]: graphHeight + 95,
-    [EV_KIND_SYS_FAILURE]: graphHeight + 95
+    [EV_KIND_INFO]: graphHeight + rowDateHeight + rowIconsHeight * 0 + rowIconsHeightPaddingY,
+    [EV_KIND_WARNING]: graphHeight + rowDateHeight + rowIconsHeight * 1 + rowIconsHeightPaddingY,
+    [EV_KIND_APP_FAILURE]: graphHeight + rowDateHeight + rowIconsHeight * 2 + rowIconsHeightPaddingY,
+    [EV_KIND_SYS_FAILURE]: graphHeight + rowDateHeight + rowIconsHeight * 3 + rowIconsHeightPaddingY
   };
 
   const rowIcon = {
@@ -325,7 +360,7 @@ function renderChart(days) {
       }
       const x =
         dayIndex * dayWidth
-        + 0.4 * dayWidth;
+        + 0.5 * dayWidth;
 
       const y =
         rowY[evKind]
@@ -339,6 +374,7 @@ function renderChart(days) {
 
       text.setAttribute("x", x);
       text.setAttribute("y", y);
+      text.setAttribute("font-size", `${fontSizeIcons}`);
 
       text.setAttribute(
         "text-anchor",
