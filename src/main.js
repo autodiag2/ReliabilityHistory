@@ -431,6 +431,23 @@ function groupEvents(events) {
 
   return groups;
 }
+function formatReason(text, maxLen = 200, wrapAt = 60) {
+  if (!text) return "";
+
+  let t = text;
+
+  if (t.length > maxLen) {
+    t = t.slice(0, maxLen) + "…";
+  }
+
+  // insert line breaks every wrapAt chars
+  const wrapped = [];
+  for (let i = 0; i < t.length; i += wrapAt) {
+    wrapped.push(t.slice(i, i + wrapAt));
+  }
+
+  return wrapped.join("\n");
+}
 function showEvents(events) {
   const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
   for(let evKind of evKinds) {
@@ -464,7 +481,7 @@ function showEvents(events) {
 
       row.innerHTML = `
         <td>${ev.application}</td>
-        <td>${ev.reason}</td>
+        <td>${formatReason(ev.reason)}</td>
         <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
       `;
 
@@ -485,7 +502,7 @@ function showEvents(events) {
 
     detailsRow.innerHTML = `
       <td>${group.application}</td>
-      <td>${group.reason}</td>
+      <td>${formatReason(group.reason)}</td>
       <td>
         <details>
           <summary>
