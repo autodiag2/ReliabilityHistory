@@ -1,5 +1,6 @@
 const { invoke } = window.__TAURI__.core;
 
+var loadedData = [];
 async function loadDays() {
   showLoading();
   invoke("load_days").then((days) => {
@@ -8,7 +9,8 @@ async function loadDays() {
 }
 
 function onDaysLoaded(days) {
-  renderChart(days);
+  loadedData = days;
+  renderChart();
   updateScore(days);
   hideLoading();
 }
@@ -43,12 +45,23 @@ const EV_KIND_WARNING = "Warning";
 const EV_KIND_APP_FAILURE = "ApplicationFailure";
 const EV_KIND_SYS_FAILURE = "SystemFailure";
 
-function renderChart(days) {
+
+let chart_container = document.getElementById("chart");
+let timeout;
+window.chartWidth = 500;
+const observer = new ResizeObserver(() => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    window.chartWidth = chart_container.clientWidth;
+    renderChart();
+  }, 200);
+});
+observer.observe(chart_container);
+
+function renderChart() {
   const chart = document.getElementById("chart");
 
-  window.chartWidth ??=
-    chart.clientWidth || 500;
-
+  let days = loadedData;
   const width = window.chartWidth;
   const defaultPadding = 8;
   const height = 370;
@@ -75,6 +88,19 @@ function renderChart(days) {
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
 
+  svg.setAttribute(
+    "viewBox",
+    `0 0 ${width} ${height}`
+  );
+
+  svg.setAttribute(
+    "preserveAspectRatio",
+    "none"
+  );
+
+  svg.style.width = "100%";
+  svg.style.height = `${height}px`;
+  svg.style.display = "block";
   let score = maxScore;
 
   const points = [];
@@ -205,7 +231,7 @@ function renderChart(days) {
       () => {
         window.selectedDay = i;
         selectDay(i, days);
-        renderChart(days);
+        renderChart();
       }
     );
 
