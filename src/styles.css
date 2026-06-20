@@ -61,8 +61,7 @@ button:active {
 
 .overview-card {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 20px;
+  grid-template-columns: 270px 1fr;
   margin-bottom: 24px;
 }
 
@@ -71,7 +70,7 @@ button:active {
   border-radius: 28px;
   padding: 22px;
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
-  margin-left: 20px;
+  margin: 20px;
 }
 
 .score-label {
@@ -90,6 +89,7 @@ button:active {
   background: white;
   border-radius: 22px;
   padding: 20px;
+  margin: 20px;
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
 }
 
@@ -128,10 +128,10 @@ button:active {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 20px;
-  width: 100%;
+  width: 96%;
   align-content: center;
   display: flex;
-  margin-left: 20px;
+  margin-inline: 20px;
 }
 
 .day-list,

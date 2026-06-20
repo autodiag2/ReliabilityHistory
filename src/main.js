@@ -47,7 +47,7 @@ function renderChart(days) {
   const chart = document.getElementById("chart");
 
   window.chartWidth ??=
-    chart.clientWidth || 1200;
+    chart.clientWidth || 500;
 
   const width = window.chartWidth;
   const defaultPadding = 8;
