@@ -474,6 +474,34 @@ function formatReason(text, maxLen = 200, wrapAt = 60) {
 
   return wrapped.join("\n");
 }
+function showEventDetails() {
+  const section = document.getElementById("event-details");
+  section.hidden = false;
+}
+function hideEventDetails() {
+  const section = document.getElementById("event-details");
+  section.hidden = true;
+}
+const EVDBack = document.getElementById("event-details-nav-back");
+EVDBack.addEventListener("click", () => hideEventDetails())
+
+function onEventClicked(event) {
+  const time = document.getElementById("event-details-time");
+  const evDate = new Date(event.timestamp);
+  time.innerText = evDate.toLocaleDateString() + " - " + evDate.toLocaleTimeString();
+  const execName = document.getElementById("event-details-exec-name");
+  const execPath = document.getElementById("event-details-exec-path");
+  const user = document.getElementById("event-details-user");
+  const pkg = document.getElementById("event-details-owner-package");
+  const pkgVersion = document.getElementById("event-details-owner-package-version");
+  const message = document.getElementById("event-details-message");
+  message.innerText = event.reason;
+  const category = document.getElementById("event-details-category");
+  category.innerText = event.kind;
+  const debug = document.getElementById("event-details-debug");
+  console.warn("event clicked", event);
+  showEventDetails()
+}
 function showEvents(events) {
   const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
   for(let evKind of evKinds) {
@@ -510,6 +538,9 @@ function showEvents(events) {
         <td>${formatReason(ev.reason)}</td>
         <td>${new Date(ev.timestamp).toLocaleTimeString()}</td>
       `;
+      row.addEventListener("dblclick", () => {
+        onEventClicked(ev);
+      });
 
       table.appendChild(row);
 
@@ -518,6 +549,7 @@ function showEvents(events) {
 
     const detailsRow =
       document.createElement("tr");
+
     detailsRow.className = "event-row";
 
     const first =
@@ -545,20 +577,25 @@ function showEvents(events) {
               </tr>
             </thead>
             <tbody>
-              ${
-                group.events.map(ev => `
-                  <tr>
-                    <td>
-                      ${new Date(ev.timestamp).toLocaleTimeString()}
-                    </td>
-                  </tr>
-                `).join("")
-              }
             </tbody>
           </table>
         </details>
       </td>
     `;
+
+    const tbody = detailsRow.querySelector("tbody");
+    for(let ev of group.events) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>
+          ${new Date(ev.timestamp).toLocaleTimeString()}
+        </td>
+      `;
+      tbody.appendChild(tr);
+      tr.addEventListener("dblclick", () => {
+        onEventClicked(ev);
+      });
+    }
 
     table.appendChild(detailsRow);
   });

@@ -255,6 +255,16 @@ details {
   z-index: 10000;
 }
 
+#event-details {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: white;
+}
+.event-details-item {
+  display: flex;
+  gap: 20px;
+}
 .loading-overlay.hidden {
   display: none;
 }
