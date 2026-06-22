@@ -486,20 +486,37 @@ const EVDBack = document.getElementById("event-details-nav-back");
 EVDBack.addEventListener("click", () => hideEventDetails())
 
 function onEventClicked(event) {
+  
   const time = document.getElementById("event-details-time");
   const evDate = new Date(event.timestamp);
   time.innerText = evDate.toLocaleDateString() + " - " + evDate.toLocaleTimeString();
-  const execName = document.getElementById("event-details-exec-name");
+
+  const execPathStr = "/usr/bin/ls";
   const execPath = document.getElementById("event-details-exec-path");
+  execPath.innerText = execPathStr;
+
+  const execName = document.getElementById("event-details-exec-name");
   const user = document.getElementById("event-details-user");
-  const pkg = document.getElementById("event-details-owner-package");
-  const pkgVersion = document.getElementById("event-details-owner-package-version");
+  invoke("exec_retrieve_packages_info", {
+    path: execPathStr
+  }).then((foundPackages) => {
+    const pkgs = document.getElementById("event-details-owner-packages");
+    pkgs.innerHTML = "";
+    for(let pkg of foundPackages) {
+      const pkgDiv = document.createElement("div");
+      pkgDiv.className = "event-details-owner-package";
+      pkgDiv.innerHTML = `
+        <p class="event-details-owner-package-name">${pkg.name}</p>
+        <p class="event-details-owner-package-version">${pkg.version}</p>
+      `;
+      pkgs.appendChild(pkgDiv);
+    }
+  });
   const message = document.getElementById("event-details-message");
   message.innerText = event.reason;
   const category = document.getElementById("event-details-category");
   category.innerText = event.kind;
   const debug = document.getElementById("event-details-debug");
-  console.warn("event clicked", event);
   showEventDetails()
 }
 function showEvents(events) {
