@@ -525,7 +525,18 @@ function onEventClicked(event) {
   const category = document.getElementById("event-details-category");
   category.innerText = event.kind;
   const debug = document.getElementById("event-details-debug");
-  showEventDetails()
+  let debugHTML = "";
+  for(let infoKey in event) {
+    debugHTML += `
+      <div class="debug-info">
+        <p class="debug-info-key">${infoKey}</p>
+        <p>:</p>
+        <p class="debug-info-value">${event[infoKey]}</p>
+      </div>
+    `;
+  }
+  debug.innerHTML = debugHTML;
+  showEventDetails();
 }
 function showEvents(events) {
   const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];

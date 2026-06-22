@@ -254,13 +254,26 @@ details {
   justify-content: center;
   z-index: 10000;
 }
-
+.debug-info p {
+  margin: 0;
+}
+.debug-info {
+  display: flex;
+  margin: 0;
+}
+.debug-info-value {
+  margin-left: 10px;
+}
 #event-details {
   position: fixed;
   inset: 0;
   z-index: 10000;
   background: white;
   overflow: scroll;
+}
+#event-details-debug {
+  border: 1px solid #2563eb;
+  padding: 10px;
 }
 .event-details-item {
   display: flex;
