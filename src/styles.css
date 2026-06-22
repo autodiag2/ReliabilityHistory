@@ -324,4 +324,11 @@ details {
   padding: 0 10px;
   display: flex;
   gap: 10px;
+  width: fit-content;
+}
+.event-details-item-key {
+  width: 20%;
+}
+.event-details-item-value {
+  width: 80%;
 }

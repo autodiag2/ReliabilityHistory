@@ -24,63 +24,47 @@
         </button>
       </div>
       <div id="event-details-show-section">
-        <div class="event-details-item">
-          Time: 
-          <div id="event-details-time">
-            14:00
-          </div>
-        </div>
-        <div class="event-details-item">
-          Executable name:
-          <div id="event-details-exec-name">
-            ls
-          </div>
-        </div>
-        <div class="event-details-item">
-          Executable path:
-          <div id="event-details-exec-path">
-            /usr/bin/ls
-          </div>
-        </div>
-        <div class="event-details-item">
-          Username:
-          <div id="event-details-user">
-            username
-          </div>
-        </div>
-        <div class="event-details-item">
-          Packages:
-          <div id="event-details-owner-packages">
-            <div class="event-details-owner-package">
-              <p class="event-details-owner-package-name">coreutils</p>
-              <p class="event-details-owner-package-version">1.0</p>
-            </div>
-          </div>
-        </div>
-        <div class="event-details-item">
-          Message:
-          <div id="event-details-message">
-            segv
-          </div>
-        </div>
-        <div class="event-details-item">
-          Kind: 
-          <div id="event-details-category">
-            ApplicationFailure
-          </div>
-        </div>
-        <div class="event-details-item">
-          Debug info:
-          <div id="event-details-debug">
-            exec path + cmdline<br>
-            time<br>
-            pid<br>
-            uid gid + resolved to name<br>
-            cap effective<br>
-            kernel specific fields (if applicable)<br>
-            coredump fields (optional, allow to install coredump with a button)<br>
-          </div>
-        </div>
+        <table>
+          <tbody>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Time:</td>
+              <td id="event-details-time" class="event-details-item-value">14:00</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Executable name:</td>
+              <td id="event-details-exec-name" class="event-details-item-value">ls</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Executable path:</td>
+              <td id="event-details-exec-path" class="event-details-item-value">/usr/bin/ls</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Username:</td>
+              <td id="event-details-user" class="event-details-item-value">username</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Packages:</td>
+              <td id="event-details-owner-packages" class="event-details-item-value">
+                <div class="event-details-owner-package">
+                  <p class="event-details-owner-package-name">coreutils</p>
+                  <p class="event-details-owner-package-version">1.0</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Message:</td>
+              <td id="event-details-message" class="event-details-item-value">segv</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Kind:</td>
+              <td id="event-details-category" class="event-details-item-value">ApplicationFailure</td>
+            </tr>
+            <tr class="event-details-item">
+              <td class="event-details-item-key">Debug info:</td>
+              <td id="event-details-debug" class="event-details-item-value"></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <main id="app-shell">
