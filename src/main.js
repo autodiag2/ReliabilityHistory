@@ -497,11 +497,13 @@ function onEventClicked(event) {
   const evDate = new Date(event.timestamp);
   time.innerText = evDate.toLocaleDateString() + " - " + evDate.toLocaleTimeString();
 
-  const execPathStr = "/usr/bin/ls";
+  const execPathStr = event.exec_path;
   const execPath = document.getElementById("event-details-exec-path");
   execPath.innerText = execPathStr;
 
   const execName = document.getElementById("event-details-exec-name");
+  execName.innerText = event.application;
+  
   const user = document.getElementById("event-details-user");
   invoke("exec_retrieve_packages_info", {
     path: execPathStr

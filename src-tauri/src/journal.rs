@@ -56,10 +56,13 @@ pub fn collect_events() -> Vec<Event> {
                     .or_else(|_| journal.get_data("_EXE"))
                     .unwrap_or_else(|_| "unknown".to_string());
 
+                let exec_path = journal.get_data("_EXE").unwrap_or_else(|_| "unknown".to_string());
+
                 events.push(Event {
                     id: format!("journal-{}", events.len()),
                     timestamp,
                     application,
+                    exec_path: exec_path,
                     reason: message,
                     kind,
                 });

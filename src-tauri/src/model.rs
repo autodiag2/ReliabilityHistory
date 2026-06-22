@@ -14,6 +14,7 @@ pub struct Event {
     pub id: String,
     pub timestamp: DateTime<Local>,
     pub application: String,
+    pub exec_path: String,
     pub reason: String,
     pub kind: EventKind,
 }
