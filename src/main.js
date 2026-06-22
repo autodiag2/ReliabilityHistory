@@ -477,10 +477,16 @@ function formatReason(text, maxLen = 200, wrapAt = 60) {
 function showEventDetails() {
   const section = document.getElementById("event-details");
   section.hidden = false;
+  const main = document.getElementById("app-shell");
+  main.style.display = "none";
+  main.hidden = true;
 }
 function hideEventDetails() {
   const section = document.getElementById("event-details");
   section.hidden = true;
+  const main = document.getElementById("app-shell");
+  main.style.display = "initial";
+  main.hidden = false;
 }
 const EVDBack = document.getElementById("event-details-nav-back");
 EVDBack.addEventListener("click", () => hideEventDetails())

@@ -260,6 +260,7 @@ details {
   inset: 0;
   z-index: 10000;
   background: white;
+  overflow: scroll;
 }
 .event-details-item {
   display: flex;
@@ -299,4 +300,15 @@ details {
   to {
     transform: rotate(360deg);
   }
+}
+
+.event-details-owner-package {
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0 10px;
+  display: flex;
+  gap: 10px;
 }
