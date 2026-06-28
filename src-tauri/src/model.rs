@@ -5,8 +5,8 @@ use serde::Serialize;
 pub enum EventKind {
     ApplicationFailure,
     SystemFailure,
-    Warning,
-    Information,
+    ApplicationWarning,
+    SystemWarning,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -19,6 +19,7 @@ pub struct Event {
     pub kind: EventKind,
     pub user: String,
     pub user_id: i64,
+    pub classifier_reason: String,
 }
 
 #[derive(Clone, Serialize)]

@@ -40,9 +40,9 @@ function selectDay(index, days) {
 }
 
 const AUTORECOVER_SCORE_PER_DAY = 1.0;
-const EV_KIND_INFO = "Information";
-const EV_KIND_WARNING = "Warning";
+const EV_KIND_APP_WARNING = "ApplicationWarning";
 const EV_KIND_APP_FAILURE = "ApplicationFailure";
+const EV_KIND_SYS_WARNING = "SystemWarning";
 const EV_KIND_SYS_FAILURE = "SystemFailure";
 
 
@@ -139,9 +139,11 @@ function renderChart() {
           ? 1.0
         : event.kind === EV_KIND_SYS_FAILURE
           ? 1.5
-        : event.kind === EV_KIND_WARNING
+        : event.kind === EV_KIND_APP_WARNING
           ? 0.25
-        : 0.0;
+        : event.kind === EV_KIND_SYS_WARNING
+          ? 0.25
+          : 0.0;
 
       score =
         Math.max(0.0, score);
@@ -347,15 +349,15 @@ function renderChart() {
   svg.appendChild(curve);
 
   const rowY = {
-    [EV_KIND_INFO]: graphHeight + rowDateHeight + rowIconsHeight * 0 + rowIconsHeightPaddingY,
-    [EV_KIND_WARNING]: graphHeight + rowDateHeight + rowIconsHeight * 1 + rowIconsHeightPaddingY,
+    [EV_KIND_APP_WARNING]: graphHeight + rowDateHeight + rowIconsHeight * 0 + rowIconsHeightPaddingY,
+    [EV_KIND_SYS_WARNING]: graphHeight + rowDateHeight + rowIconsHeight * 1 + rowIconsHeightPaddingY,
     [EV_KIND_APP_FAILURE]: graphHeight + rowDateHeight + rowIconsHeight * 2 + rowIconsHeightPaddingY,
     [EV_KIND_SYS_FAILURE]: graphHeight + rowDateHeight + rowIconsHeight * 3 + rowIconsHeightPaddingY
   };
 
   const rowIcon = {
-    [EV_KIND_INFO]: "ℹ️",
-    [EV_KIND_WARNING]: "⚠️",
+    [EV_KIND_APP_WARNING]: "⚠️",
+    [EV_KIND_SYS_WARNING]: "⚠️",
     [EV_KIND_APP_FAILURE]: "❌",
     [EV_KIND_SYS_FAILURE]: "❌"
   };
@@ -363,8 +365,8 @@ function renderChart() {
   days.forEach((day, dayIndex) => {
 
     const toDrawEventsKind = {
-      [EV_KIND_INFO]: false,
-      [EV_KIND_WARNING]: false,
+      [EV_KIND_APP_WARNING]: false,
+      [EV_KIND_SYS_WARNING]: false,
       [EV_KIND_APP_FAILURE]: false,
       [EV_KIND_SYS_FAILURE]: false
     };
@@ -390,7 +392,7 @@ function renderChart() {
 
       const y =
         rowY[evKind]
-        || rowY.Information;
+        || rowY.ApplicationWarning;
 
       const text =
         document.createElementNS(
@@ -409,7 +411,7 @@ function renderChart() {
 
       text.textContent =
         rowIcon[evKind]
-        || "ℹ️";
+        || "⚠️";
 
       svg.appendChild(text);
     });
@@ -541,7 +543,7 @@ function onEventClicked(event) {
   showEventDetails();
 }
 function showEvents(events) {
-  const evKinds = [EV_KIND_INFO, EV_KIND_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
+  const evKinds = [EV_KIND_SYS_WARNING, EV_KIND_APP_WARNING, EV_KIND_APP_FAILURE, EV_KIND_SYS_FAILURE];
   for(let evKind of evKinds) {
     const table = document.querySelector(`#events-${evKind.toLowerCase()} tbody`);
     if (table) {
