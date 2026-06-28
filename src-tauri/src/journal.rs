@@ -2,6 +2,7 @@ use chrono::{Local, TimeZone};
 use sd_journal::{CursorMovement, FileFlags, Journal, UserFlags};
 
 use crate::model::{Event, EventKind};
+use users::{get_user_by_uid, os::unix::UserExt};
 
 pub fn collect_events() -> Vec<Event> {
     let journal = match Journal::open(
@@ -49,6 +50,16 @@ pub fn collect_events() -> Vec<Event> {
                     Err(_) => continue,
                 };
 
+                let user_id = journal
+                    .get_data("_UID")
+                    .ok()
+                    .and_then(|s| s.parse::<u32>().ok())
+                    .unwrap_or(0);
+
+                let user = get_user_by_uid(user_id)
+                    .map(|u| u.name().to_string_lossy().into_owned())
+                    .unwrap_or_default();
+
                 let timestamp = Local.from_utc_datetime(&naive);
 
                 let application = journal
@@ -65,6 +76,8 @@ pub fn collect_events() -> Vec<Event> {
                     exec_path: exec_path,
                     reason: message,
                     kind,
+                    user: user.to_string(),
+                    user_id: user_id as i64,
                 });
 
                 if events.len() >= 500 {

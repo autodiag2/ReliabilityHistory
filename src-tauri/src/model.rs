@@ -17,6 +17,8 @@ pub struct Event {
     pub exec_path: String,
     pub reason: String,
     pub kind: EventKind,
+    pub user: String,
+    pub user_id: i64,
 }
 
 #[derive(Clone, Serialize)]

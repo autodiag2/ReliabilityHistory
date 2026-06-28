@@ -503,12 +503,12 @@ function onEventClicked(event) {
 
   const execName = document.getElementById("event-details-exec-name");
   execName.innerText = event.application;
-  
-  const user = document.getElementById("event-details-user");
+
+  const pkgs = document.getElementById("event-details-owner-packages");
+  pkgs.innerHTML = "";
   invoke("exec_retrieve_packages_info", {
     path: execPathStr
   }).then((foundPackages) => {
-    const pkgs = document.getElementById("event-details-owner-packages");
     pkgs.innerHTML = "";
     for(let pkg of foundPackages) {
       const pkgDiv = document.createElement("div");
@@ -520,6 +520,8 @@ function onEventClicked(event) {
       pkgs.appendChild(pkgDiv);
     }
   });
+  const user = document.getElementById("event-details-user");
+  user.innerText = event.user + " (uid: " + event.user_id + ")";
   const message = document.getElementById("event-details-message");
   message.innerText = event.reason;
   const category = document.getElementById("event-details-category");
