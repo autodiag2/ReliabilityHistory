@@ -65,7 +65,7 @@ function renderChart() {
   const width = window.chartWidth;
   const defaultPadding = 8;
   const height = 370;
-  const fontSize = 11;
+  const fontSize = 8;
   const fontSizeIcons = 18;
   const rowDateHeightPaddingY = defaultPadding;
   const rowDateHeight = fontSize + rowDateHeightPaddingY * 2;
