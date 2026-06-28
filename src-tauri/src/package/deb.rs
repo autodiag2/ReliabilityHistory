@@ -2,15 +2,15 @@ use std::process::Command;
 use crate::package::package::PackageInfo;
 
 pub fn retrieve(path: &str) -> Result<Vec<PackageInfo>, String> {
-    let outputRes = Command::new("dpkg-query")
+    let output_res = Command::new("dpkg-query")
         .args(["-S", path])
         .output()
         .map_err(|e| e.to_string());
-    match outputRes {
+    match output_res {
         Err(reason) => return Err(reason),
         _ => ()
     }
-    let output = outputRes.unwrap();
+    let output = output_res.unwrap();
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
     }

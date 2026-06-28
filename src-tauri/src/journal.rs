@@ -51,12 +51,6 @@ pub fn collect_events() -> Vec<Event> {
                 let unit =
                     journal.get_data("_SYSTEMD_UNIT").unwrap_or_default();
 
-                let priority = journal
-                    .get_data("PRIORITY")
-                    .ok()
-                    .and_then(|s| s.parse::<u8>().ok())
-                    .unwrap_or(5);
-
                 let has_coredump =
                     journal.get_data("COREDUMP_PID").is_ok()
                         || journal.get_data("COREDUMP_EXE").is_ok();
