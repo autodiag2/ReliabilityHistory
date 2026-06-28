@@ -1,0 +1,98 @@
+name: Build and publish release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build artifacts and publish GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (for JS frontend builds, if present)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Set up Rust (if present)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Build Rust (if Cargo.toml exists)
+        run: |
+          if [ -f Cargo.toml ]; then
+            echo "Found Cargo.toml — building release..."
+            cargo build --release
+          else
+            echo "No Cargo.toml found — skipping Rust build."
+          fi
+
+      - name: Install and build Node (if package.json exists)
+        run: |
+          if [ -f package.json ]; then
+            echo "Found package.json — installing and building..."
+            npm ci
+            npm run build --if-present
+          else
+            echo "No package.json found — skipping Node build."
+          fi
+
+      - name: Gather release artifacts
+        id: gather
+        run: |
+          set -e
+          TAG=${GITHUB_REF#refs/tags/}
+          mkdir -p release-artifacts
+          echo "tag=${TAG}" > release-artifacts/metadata.txt
+          echo "commit=${GITHUB_SHA}" >> release-artifacts/metadata.txt
+
+          # collect Rust release binaries if any
+          if [ -d target/release ]; then
+            cp -r target/release/* release-artifacts/ 2>/dev/null || true
+          fi
+
+          # collect common frontend dist folder if present
+          if [ -d dist ]; then
+            cp -r dist release-artifacts/ || true
+          fi
+
+          # fallback: include repository files so the release always has something useful
+          cp -r .github release-artifacts/ || true
+
+          ARTIFACT_NAME="release-${TAG}.zip"
+          (cd release-artifacts && zip -r "../${ARTIFACT_NAME}" .) || true
+          echo "artifact=${ARTIFACT_NAME}" >> $GITHUB_ENV
+          ls -la
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: "Automated release for ${{ github.ref_name }} (commit ${{ github.sha }})"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.artifact }}
+          asset_name: ${{ env.artifact }}
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
